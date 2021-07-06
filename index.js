@@ -1,66 +1,52 @@
-type Options = {
-    separator?: string;
-    formatFourDigits?: boolean;
-};
-
+'use strict';
+exports.__esModule = true;
 /**
  * Non-Breaking Space `&nbsp;`
  * @const {string}
  */
-const NBSP = String.fromCharCode(160);
-
+var NBSP = String.fromCharCode(160);
 /**
  * @typedef {Object} ParsedNumber
  * @prop {string} integer
  * @prop {string} fraction
  * @prop {string} sign
  */
-
 /**
  * @param {number} number The number to parse
  * @returns The parsed object
  */
-function parseNumber(number: number): { integer: string; fraction: string; sign: string } {
-    const isNegative = number < 0;
-    let numberString = String(number);
-
+function parseNumber(number) {
+    var isNegative = number < 0;
+    var numberString = String(number);
     if (isNegative) {
         numberString = numberString.slice(1);
     }
-
-    const decimal = numberString.split('.');
-
+    var decimal = numberString.split('.');
     return {
         integer: decimal[0],
         fraction: decimal[1] || '',
         sign: isNegative ? '-' : '',
     };
 }
-
 /**
  * @param {number} number The number to format with the separator
  * @param {string} separator The separator for formatting the number
  * @returns {string} The formatted string
  */
-function format(number: number, separator: string): string {
-    let parsedNumber = String(number);
-
+function format(number, separator) {
+    var parsedNumber = String(number);
     while (parsedNumber.length % 3) {
         parsedNumber = '#' + parsedNumber;
     }
-
-    let result = parsedNumber.substr(0, 3);
+    var result = parsedNumber.substr(0, 3);
     result = result.replace(/#/g, '');
-
-    let i;
-    const { length } = parsedNumber;
+    var i;
+    var length = parsedNumber.length;
     for (i = 3; i < length; i += 3) {
         result = result + separator + parsedNumber.substr(i, 3);
     }
-
     return result;
 }
-
 /**
  * @param {number} number
  * @param {Object|string} [options=" "]
@@ -78,30 +64,29 @@ function format(number: number, separator: string): string {
  * formatThousands(10000, {separator: "'"});
  * //=> "10'000"
  */
-export default function (number?: number | null | undefined, options?: Options | string): string {
-    let result = '';
-    let separator = NBSP;
-    let formatFourDigits = true;
-
+function default_1(number, options) {
+    var _a;
+    var result = '';
+    var separator = NBSP;
+    var formatFourDigits = true;
     if (number === undefined || !number || number === 0) {
         return result;
     }
-
-    const numberObject = parseNumber(number);
-    const numberString = String(number);
-
+    var numberObject = parseNumber(number);
+    var numberString = String(number);
     if (typeof options === 'object') {
         if ('separator' in options) {
-            separator = options?.separator ?? '';
+            separator =
+                (_a = options === null || options === void 0 ? void 0 : options.separator) !== null && _a !== void 0
+                    ? _a
+                    : '';
         }
-
         if (typeof options.formatFourDigits === 'boolean') {
-            ({ formatFourDigits } = options);
+            formatFourDigits = options.formatFourDigits;
         }
     } else if (typeof options !== 'undefined') {
         separator = options;
     }
-
     if (numberObject.integer.length <= 3 || (numberObject.integer.length === 4 && !formatFourDigits)) {
         result = numberString;
     } else {
@@ -112,6 +97,6 @@ export default function (number?: number | null | undefined, options?: Options |
             result += numberObject.fraction;
         }
     }
-
     return result;
 }
+exports['default'] = default_1;

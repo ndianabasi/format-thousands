@@ -1,5 +1,5 @@
-const test = require('ava');
-const fn = require('.');
+import test from 'ava'
+import fn from './index.js'
 
 const NBSP = String.fromCharCode(160);
 
