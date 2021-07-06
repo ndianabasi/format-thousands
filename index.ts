@@ -1,3 +1,8 @@
+type Options = {
+    separator: string;
+    formatFourDigits: boolean
+  }
+
 /**
  * Non-Breaking Space `&nbsp;`
  * @const {string}
@@ -12,10 +17,10 @@ const NBSP = String.fromCharCode(160);
  */
 
 /**
- * @param {number} number
- * @returns {ParsedNumber}
+ * @param {number} number The number to parse
+ * @returns The parsed object
  */
-function parseNumber(number) {
+function parseNumber(number: number): {integer: string, fraction: string, sign: string} {
   const isNegative = number < 0;
   let numberString = String(number);
 
@@ -33,24 +38,24 @@ function parseNumber(number) {
 }
 
 /**
- * @param {number} number
- * @param {string} separator
- * @returns {string}
+ * @param {number} number The number to format with the separator
+ * @param {string} separator The separator for formatting the number
+ * @returns {string} The formatted string
  */
-function format(number, separator) {
-  number = String(number);
+function format(number: number, separator: string): string {
+  let parsedNumber = String(number);
 
-  while (number.length % 3) {
-    number = '#' + number;
+  while (parsedNumber.length % 3) {
+    parsedNumber = '#' + parsedNumber;
   }
 
-  let result = number.substr(0, 3);
+  let result = parsedNumber.substr(0, 3);
   result = result.replace(/#/g, '');
 
   let i;
-  const {length} = number;
+  const {length} = parsedNumber;
   for (i = 3; i < length; i += 3) {
-    result = result + separator + number.substr(i, 3);
+    result = result + separator + parsedNumber.substr(i, 3);
   }
 
   return result;
@@ -73,7 +78,7 @@ function format(number, separator) {
  * formatThousands(10000, {separator: "'"});
  * //=> "10'000"
  */
-module.exports = function (number, options) {
+export default function (number: number, options: Options | string): string {
   let result = '';
   let separator = NBSP;
   let formatFourDigits = true;
@@ -86,7 +91,7 @@ module.exports = function (number, options) {
   const numberString = String(number);
 
   if (typeof options === 'object') {
-    if (options.separator) {
+    if ('separator' in options) {
       ({separator} = options);
     }
 
@@ -104,7 +109,7 @@ module.exports = function (number, options) {
     result = numberString;
   } else {
     result += numberObject.sign;
-    result += format(numberObject.integer, separator);
+    result += format(Number(numberObject.integer), separator);
     if (numberObject.fraction) {
       result += '.';
       result += numberObject.fraction;
